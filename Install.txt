@@ -10,6 +10,7 @@ minikube stop -p STEP
 minikube delete -p STEP
 
 kubectl get componentstatuses
+kubectl get services
 
 kubectl cluster-info
 
