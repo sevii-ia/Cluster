@@ -1,7 +1,7 @@
 install:
   virtualbox
   kubectl
-  minicube
+  minikube
 ========================
 
 minikube start --cpus=2 --memory=2gb --disk-size=10gb -p step
