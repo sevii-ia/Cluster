@@ -7,7 +7,7 @@ install:
 minikube start --cpus=2 --memory=2gb --disk-size=10gb -p step
 minikube start --cpus=2 --memory=2gb --disk-size=10gb -p ABOBA --driver=virtualbox
 minikube stop -p STEP
-minikube delete
+minikube delete -p STEP
 
 kubectl get componentstatuses
 
