@@ -21,10 +21,10 @@ kubectl exec hello date
 kubectl exec -it hello (-- /bin/bash)(sh)
 
 kubectl run pode-1 --image=ubuntu/apache2 --port=80
-kubectl describe pod pode-1111111
-kubectl exec -it pode-1111111 --container pode-1111111 -- /bin/bash
+kubectl describe pod pode-1
+kubectl exec -it pode-1 --container pode-1 -- /bin/bash
 
-kubectl port-forward pode-1111111 8000:80
+kubectl port-forward pode-1 8000:80
 
 ====================================================================
 
