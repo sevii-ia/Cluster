@@ -1,0 +1,44 @@
+kubectl apply -f manifest.yaml
+
+apiVersion: batch/v1
+kind: test
+metadata:
+  name: test
+spec:
+  containers:
+  - name: test
+    image: ubuntu/apache2
+
+====================================================================
+
+kubectl delete -f manifest.yaml
+kubectl apply -f manifest.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test
+spec:
+  containers:
+  - name: test
+    image: ubuntu/apache2
+    ports:
+    - containerPort: 80
+
+====================================================================
+
+apiVersion : v1
+kind: Pod
+metadata:
+  name: my-app
+spec:
+  containers:
+    - name : container-web
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+
+    - name : container-api
+      image: tomcat:8.5.38
+      ports:
+        - containerPort: 8080
