@@ -1,149 +1,229 @@
 # Cluster
 
-Цей репозиторій містить інструкції та конфігурації для налаштування Kubernetes кластера за допомогою Minikube та VirtualBox.
+Kubernetes cluster configuration and deployment setup using **Minikube** and **VirtualBox**.
+This repository contains scripts, manifests, and configuration files required to provision a local Kubernetes environment for development and testing purposes.
 
-## Встановлення
+---
 
-Для налаштування кластера на вашому комп'ютері, вам потрібно виконати кілька кроків:
+## Table of Contents
 
-1. Встановіть необхідні інструменти:
+* [Overview](#overview)
+* [Project Structure](#project-structure)
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [Minikube Setup](#minikube-setup)
+* [Kubernetes Manifests](#kubernetes-manifests)
+* [Usage](#usage)
+* [Troubleshooting](#troubleshooting)
+* [Contributing](#contributing)
+* [License](#license)
 
-    - **VirtualBox**: Завантажте та встановіть з [офіційного сайту VirtualBox](https://www.virtualbox.org/).
-    - **kubectl**: Завантажте та встановіть з [офіційного сайту Kubernetes](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
-    - **Minikube**: Завантажте та встановіть з [офіційного сайту Minikube](https://minikube.sigs.k8s.io/docs/).
+---
 
-2. Додатково, на Windows, потрібно вимкнути Hyper-V:
+## Overview
 
-    ```bash
-    dism.exe /Online /Disable-Feature:Microsoft-Hyper-V
-    ```
+This project helps automate the setup of a local Kubernetes cluster environment using:
 
-## Налаштування Minikube
+* **Minikube**
+* **VirtualBox**
+* **Kubernetes manifests**
+* **Shell automation scripts**
 
-Після встановлення необхідних інструментів, виконайте наступні команди для запуску Minikube:
+It is intended for:
 
-1. Запустіть Minikube з параметрами, що виділяють ресурси для вашого кластера:
+* Local Kubernetes testing
+* Learning Kubernetes fundamentals
+* Development sandbox environments
+* CI/CD experimentation
 
-    ```bash
-    minikube start --cpus=2 --memory=2gb --disk-size=10gb -p STEP
-    ```
+---
 
-2. Для використання VirtualBox як драйвера:
+## Project Structure
 
-    ```bash
-    minikube start --cpus=2 --memory=2gb --disk-size=10gb -p STEP --driver=virtualbox
-    ```
+```bash
+.
+├── LICENSE
+├── Manifest.yaml
+├── README.md
+└── install_kubernetes.sh
+```
 
-3. Щоб зупинити Minikube кластер:
+### Files Description
 
-    ```bash
-    minikube stop -p STEP
-    ```
+| File                    | Description                                                  |
+| ----------------------- | ------------------------------------------------------------ |
+| `install_kubernetes.sh` | Script used to install and configure Kubernetes dependencies |
+| `Manifest.yaml`         | Kubernetes deployment/service manifest                       |
+| `README.md`             | Project documentation                                        |
+| `LICENSE`               | Repository license                                           |
 
-4. Для видалення кластера:
+---
 
-    ```bash
-    minikube delete -p STEP
-    ```
+## Requirements
 
-## Використання Kubernetes
+Before starting, ensure the following tools are installed:
 
-Для роботи з вашим Kubernetes кластером, ви можете використовувати `kubectl` для виконання різних команд:
+### Required Software
 
-1. Перевірка статусу компонентів:
+* [VirtualBox](https://www.virtualbox.org/)
+* [Kubectl](https://kubernetes.io/docs/tasks/tools/)
+* [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 
-    ```bash
-    kubectl get componentstatuses
-    ```
+### Windows Users
 
-2. Перевірка сервісів у кластері:
+Disable Hyper-V before using VirtualBox:
 
-    ```bash
-    kubectl get services
-    ```
+```powershell
+dism.exe /Online /Disable-Feature:Microsoft-Hyper-V
+```
 
-3. Інформація про кластер:
+Restart your machine after executing the command.
 
-    ```bash
-    kubectl cluster-info
-    ```
+---
 
-4. Перевірка вузлів у кластері:
+## Installation
 
-    ```bash
-    kubectl get nodes
-    ```
+Clone the repository:
 
-5. Перегляд та керування контейнерами (Pods):
+```bash
+git clone https://github.com/sevii-ia/Cluster.git
+cd Cluster
+```
 
-    ```bash
-    kubectl get pods
-    kubectl delete pods hello
-    kubectl describe pods hello
-    kubectl exec hello date
-    kubectl exec -it hello -- /bin/bash
-    ```
+Make the installation script executable:
 
-6. Створення та опис поду:
+```bash
+chmod +x install_kubernetes.sh
+```
 
-    ```bash
-    kubectl run pode-1 --image=ubuntu/apache2 --port=80
-    kubectl describe pod pode-1
-    kubectl exec -it pode-1 --container pode-1 -- /bin/bash
-    ```
+Run the installation script:
 
-7. Порт-форвардинг:
+```bash
+./install_kubernetes.sh
+```
 
-    ```bash
-    kubectl port-forward pode-1 8000:80
-    ```
+---
 
-## Маніфести
+## Minikube Setup
 
-Маніфести використовуються для опису ресурсів, які будуть розгорнуті в Kubernetes.
+Start Minikube with allocated resources:
 
-1. Мінімальний маніфест для створення ресурсу:
+```bash
+minikube start --cpus=2 --memory=2gb --disk-size=10gb -p STEP
+```
 
-    ```yaml
-    apiVersion: batch/v1
-    kind: test
-    metadata:
-      name: test
-    spec:
-      containers:
-      - name: test
-        image: ubuntu/apache2
-    ```
+If using VirtualBox as the driver:
 
-    Для застосування маніфесту використовуйте команду:
+```bash
+minikube start --driver=virtualbox
+```
 
-    ```bash
-    kubectl apply -f manifest.yaml
-    ```
+Verify cluster status:
 
-2. Для видалення маніфесту:
+```bash
+kubectl cluster-info
+kubectl get nodes
+```
 
-    ```bash
-    kubectl delete -f manifest.yaml
-    ```
+---
 
-3. Маніфест для створення поду з двома контейнерами (Nginx та Tomcat):
+## Kubernetes Manifests
 
-    ```yaml
-    apiVersion : v1
-    kind: Pod
-    metadata:
-      name: my-app
-    spec:
-      containers:
-        - name : container-web
-          image: nginx:latest
-          ports:
-            - containerPort: 80
-        - name : container-api
-          image: tomcat:8.5.38
-          ports:
-            - containerPort: 8080
-    ```
+Apply Kubernetes resources using:
 
-Цей маніфест створює под з двома контейнерами: один для веб-сервера Nginx, інший для серверу додатків Tomcat.
+```bash
+kubectl apply -f Manifest.yaml
+```
+
+Check deployed resources:
+
+```bash
+kubectl get all
+```
+
+---
+
+## Usage
+
+Typical workflow:
+
+1. Install dependencies
+2. Start Minikube
+3. Apply manifests
+4. Verify deployment
+5. Access services
+
+Example:
+
+```bash
+kubectl apply -f Manifest.yaml
+kubectl get pods
+kubectl get svc
+```
+
+---
+
+## Troubleshooting
+
+### Minikube fails to start
+
+Try deleting the existing cluster:
+
+```bash
+minikube delete
+```
+
+Then recreate it:
+
+```bash
+minikube start --driver=virtualbox
+```
+
+---
+
+### Kubectl cannot connect to cluster
+
+Check context configuration:
+
+```bash
+kubectl config current-context
+```
+
+Restart Minikube if necessary:
+
+```bash
+minikube stop
+minikube start
+```
+
+---
+
+### VirtualBox driver issues
+
+Ensure:
+
+* Hyper-V is disabled
+* VirtualBox is updated
+* BIOS virtualization is enabled
+
+---
+
+## Contributing
+
+Contributions are welcome.
+
+To contribute:
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to your branch
+5. Open a Pull Request
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
+See the [LICENSE](LICENSE) file for more information.
